@@ -1,0 +1,49 @@
+rm(list=ls())                                                               #remove all elements
+
+scoreCard <- as.data.frame(matrix(data=NA,ncol = 2, byrow = T))             #making a dataset to use
+colnames(scoreCard) <- c("Dice 1", "Dice 2")                                #renaming the columns
+
+r=1                                                                         #r is also the values for row which we will use in the dataset
+
+for(i in 1:6){
+  for (j in 1:6) {
+    c=1                                                                     #c is the values we shall assign to the columns
+    scoreCard[r,c] <- i
+    c<- c+1
+    scoreCard[r,c]<-j
+    r<-r+1
+      }
+}
+
+scoreCard
+
+MeanDie <- mean(1:6)
+VarianceDie <-  ((1-3.5)^2+(2-3.5)^2+(3-3.5)^2+(4-3.5)^2+(5-3.5)^2+(6-3.5)^2)/6
+
+MeanDie
+VarianceDie
+
+scoreCard$Mean <- rowMeans(scoreCard[,c(1,2)])
+variance <- ((scoreCard$`Dice 1` - scoreCard$Mean)^2 + (scoreCard$`Dice 2`- scoreCard$Mean)^2)/2
+scoreCard$Variance <- variance
+scoreCard
+
+table(scoreCard$Mean)
+table(scoreCard$Variance)
+
+prop.table(table(scoreCard$Mean))
+prop.table(table(scoreCard$Variance))
+
+Mean <- summarise(group_by(scoreCard, Mean), probability = length(Mean)/36)
+Mean$Outcome <- Mean$Mean * Mean$probability
+head(Mean,11)
+Variance <- summarise(group_by(scoreCard, Variance), probability = length(Variance)/36)
+Variance$Outcome <- Variance$Variance * Variance$probability
+Variance
+
+
+E_Mean <- sum(Mean$Mean * Mean$probability)                 #or simply sum(Mean$Outcome)
+E_Variance <- sum(Variance$Variance * Variance$probability) #or simple sum(Variance$Outcome)
+
+E_Mean
+E_Variance
